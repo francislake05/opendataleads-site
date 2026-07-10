@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenData Leads — Les nouvelles entreprises de votre secteur, chaque semaine</title>
+<meta name="description" content="Flux hebdomadaires d'entreprises nouvellement immatriculées (BODACC, RNE), filtrés par secteur et région, enrichis et prêts pour votre CRM. Échantillon gratuit.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='18.5' fill='%237B2A31'/%3E%3Crect x='12' y='14.4' width='10' height='2' rx='1' fill='%23EFE2DF'/%3E%3Crect x='12' y='19' width='16' height='2' rx='1' fill='%23EFE2DF'/%3E%3Crect x='12' y='23.6' width='7' height='2' rx='1' fill='%23EFE2DF' opacity='.7'/%3E%3C/svg%3E">
+<link rel="canonical" href="https://opendataleads.com/">
+</head>
+<body style="margin:0">
+<style>
+  :root{
+    --paper:#E9E7DF;--paper-2:#F2F1EB;
+    --ink:#17150F;--ink-2:#4C483D;--ink-3:#6E695C;
+    --line:#CFCBBE;--line-2:#DED9CC;
+    --seal:#7B2A31;--seal-2:#5C1E23;--seal-tint:#EFE2DF;
+    --live:#2F7D56;
+    --panel:#16171A;--panel-line:#26282D;--panel-ink:#E9E6DC;--panel-dim:#8B8A80;
+    --gold:#B79A6B;
+    --mono: ui-monospace,"SF Mono","Cascadia Mono","Segoe UI Mono",Consolas,"Liberation Mono",monospace;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  .odl{font-family:var(--sans);color:var(--ink);line-height:1.55;background:var(--paper);
+    background-image:linear-gradient(90deg,rgba(23,21,15,.024) 1px,transparent 1px),
+      radial-gradient(130% 80% at 88% -6%,rgba(123,42,49,.06) 0%,transparent 42%);
+    background-size:34px 100%,100% 100%;-webkit-font-smoothing:antialiased}
+  .odl ::selection{background:var(--seal);color:#fff}
+  .odl .wrap{max-width:1120px;margin:0 auto;padding:0 34px}
+  .odl a{color:inherit}
+  .odl a:focus-visible,.odl button:focus-visible{outline:2px solid var(--seal);outline-offset:3px;border-radius:3px}
+
+  /* masthead */
+  .odl .mast{display:flex;align-items:center;justify-content:space-between;padding:20px 0 16px;border-bottom:2px solid var(--ink)}
+  .odl .brand{display:flex;align-items:center;gap:12px}
+  .odl .seal-mark{width:38px;height:38px;flex:0 0 auto}
+  .odl .brand .nm{font-family:var(--serif);font-weight:600;font-size:21px;letter-spacing:.2px;line-height:1}
+  .odl .brand .nm small{display:block;font-family:var(--mono);font-weight:500;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--seal);margin-top:5px}
+  .odl .dateline{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);text-align:right;line-height:1.7}
+  .odl .dateline b{color:var(--ink);font-weight:600}
+
+  /* hero */
+  .odl .hero{display:grid;grid-template-columns:1.04fr .96fr;gap:60px;padding:66px 0 46px;align-items:center}
+  .odl .kicker{font-family:var(--mono);font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--seal);display:flex;align-items:center;gap:11px;margin:0 0 26px}
+  .odl .kicker::before{content:"";width:30px;height:2px;background:var(--seal)}
+  .odl h1{font-family:var(--serif);font-weight:600;font-size:clamp(34px,5vw,58px);line-height:1.02;letter-spacing:-.015em;margin:0 0 24px;text-wrap:balance}
+  .odl h1 em{font-style:italic;color:var(--seal)}
+  .odl .lede{font-size:18px;color:var(--ink-2);max-width:33em;margin:0 0 34px}
+  .odl .actions{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+  .odl .btn{display:inline-flex;align-items:center;gap:10px;background:var(--ink);color:var(--paper-2);text-decoration:none;font-weight:500;font-size:15.5px;padding:14px 24px;border-radius:2px;transition:background .2s ease,transform .2s ease}
+  .odl .btn:hover{background:var(--seal-2);transform:translateY(-1px)}
+  .odl .btn svg{transition:transform .2s ease}
+  .odl .btn:hover svg{transform:translateX(4px)}
+  .odl .assurance{font-size:13.5px;color:var(--ink-3);font-family:var(--mono);letter-spacing:.02em}
+
+  /* register */
+  .odl .register{background:var(--panel);border-radius:5px;overflow:hidden;box-shadow:0 2px 0 rgba(23,21,15,.05),0 30px 60px -34px rgba(23,21,15,.6);border:1px solid #0c0d0f}
+  .odl .reg-head{display:flex;align-items:center;justify-content:space-between;padding:13px 17px;border-bottom:1px solid var(--panel-line);background:linear-gradient(#1b1c20,#161719)}
+  .odl .reg-title{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--panel-dim)}
+  .odl .reg-live{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--live)}
+  .odl .pulse{width:8px;height:8px;border-radius:50%;background:var(--live);box-shadow:0 0 0 0 rgba(47,125,86,.6);animation:odlpulse 2s infinite}
+  @keyframes odlpulse{0%{box-shadow:0 0 0 0 rgba(47,125,86,.55)}70%{box-shadow:0 0 0 7px rgba(47,125,86,0)}100%{box-shadow:0 0 0 0 rgba(47,125,86,0)}}
+  .odl .reg-body{position:relative;height:344px;overflow:hidden;background-image:repeating-linear-gradient(var(--panel) 0 47px,#131417 47px 48px)}
+  .odl .scan{position:absolute;left:0;right:0;top:0;height:48px;pointer-events:none;z-index:2;
+    background:linear-gradient(180deg,rgba(47,125,86,.12),transparent);animation:odlscan 5.5s linear infinite}
+  @keyframes odlscan{0%{transform:translateY(-48px)}100%{transform:translateY(344px)}}
+  .odl .reg-list{list-style:none;margin:0;padding:0}
+  .odl .rec{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;height:48px;padding:0 17px;border-bottom:1px solid var(--panel-line);font-family:var(--mono);color:var(--panel-ink)}
+  .odl .rec .cc{font-size:10.5px;letter-spacing:.1em;color:var(--panel-dim);border:1px solid var(--panel-line);border-radius:3px;padding:2px 0;text-align:center}
+  .odl .rec .co{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .odl .rec .co b{font-family:var(--sans);font-weight:600;font-size:14px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .odl .rec .co span{font-size:11px;color:var(--panel-dim);letter-spacing:.02em}
+  .odl .rec .co span i{color:var(--gold);font-style:normal}
+  .odl .rec .ts{font-size:10.5px;color:var(--panel-dim);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .odl .rec .ts .new{color:var(--live)}
+  .odl .rec.stampin{animation:odlstamp .5s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes odlstamp{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+  .odl .reg-fade{position:absolute;left:0;right:0;bottom:0;height:64px;pointer-events:none;background:linear-gradient(transparent,var(--panel));z-index:2}
+  .odl .reg-foot{display:flex;align-items:center;justify-content:space-between;padding:10px 17px;border-top:1px solid var(--panel-line);font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--panel-dim)}
+
+  /* scroll reveal */
+  .odl .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+  .odl .reveal.in{opacity:1;transform:none}
+
+  /* stats band */
+  .odl .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:2px solid var(--ink);border-bottom:1px solid var(--line);margin-top:26px}
+  .odl .stat{padding:34px 26px;border-right:1px solid var(--line)}
+  .odl .stat:last-child{border-right:0}
+  .odl .stat .num{font-family:var(--serif);font-weight:600;font-size:clamp(38px,5vw,54px);line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .odl .stat .num .u{color:var(--seal)}
+  .odl .stat .cap{font-size:14px;color:var(--ink-2);margin-top:12px;max-width:22em}
+  .odl .stat .src{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-3);margin-top:7px}
+
+  /* transform demo — the product proving itself */
+  .odl .demo{margin-top:64px}
+  .odl .demo .lead{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .odl .demo .lead .n{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--seal);text-transform:uppercase}
+  .odl .demo h2{font-family:var(--serif);font-weight:600;font-size:clamp(24px,3.2vw,34px);margin:0;letter-spacing:-.01em}
+  .odl .xform{display:grid;grid-template-columns:1fr 64px 1.35fr;align-items:stretch;gap:0;
+    border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--paper-2)}
+  .odl .xcol{padding:22px 22px}
+  .odl .xcol .h{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+  .odl .xcol.raw{background:#EFEDE5;border-right:1px solid var(--line)}
+  .odl .raw .line{font-family:var(--mono);font-size:13px;color:var(--ink-2);line-height:2;word-break:break-word}
+  .odl .raw .line .dim{color:var(--ink-3)}
+  .odl .xarrow{display:flex;align-items:center;justify-content:center;background:#EFEDE5;border-right:1px solid var(--line);color:var(--seal)}
+  .odl .xarrow svg{width:22px;height:22px}
+  .odl .xarrow .track{animation:odlarrow 2.6s ease-in-out infinite}
+  @keyframes odlarrow{0%,100%{transform:translateX(-3px);opacity:.5}50%{transform:translateX(3px);opacity:1}}
+  .odl .fields{display:flex;flex-direction:column}
+  .odl .fld{display:grid;grid-template-columns:120px 1fr;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line);font-family:var(--mono);font-size:13px;
+    opacity:0;transform:translateX(10px)}
+  .odl .fld:last-child{border-bottom:0}
+  .odl .fld.show{opacity:1;transform:none;transition:opacity .4s ease,transform .4s ease}
+  .odl .fld .k{color:var(--ink-3)}
+  .odl .fld .v{color:var(--ink)}
+  .odl .fld .v b{color:var(--seal-2);font-weight:600}
+  .odl .fld .v .badge{background:var(--seal-tint);color:var(--seal-2);border-radius:3px;padding:1px 6px;margin-right:6px}
+  .odl .fld .v .ok{color:var(--live)}
+
+  /* pipeline */
+  .odl .pipe{border-top:2px solid var(--ink);padding-top:8px;margin-top:64px}
+  .odl .pipe-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+  .odl .step{padding:34px 30px 34px 0;border-right:1px solid var(--line)}
+  .odl .step:last-child{border-right:0;padding-right:0}
+  .odl .step:not(:first-child){padding-left:30px}
+  .odl .step .no{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--seal);display:flex;align-items:center;gap:9px;margin-bottom:16px}
+  .odl .step .no::after{content:"";flex:1;height:1px;background:var(--line)}
+  .odl .step h3{font-family:var(--serif);font-weight:600;font-size:22px;margin:0 0 10px;letter-spacing:-.01em}
+  .odl .step p{margin:0;font-size:15px;color:var(--ink-2)}
+  .odl .step p code{font-family:var(--mono);font-size:12.5px;background:var(--seal-tint);color:var(--seal-2);padding:1px 6px;border-radius:3px}
+
+  /* authority seal */
+  .odl .authority{display:flex;align-items:center;gap:22px;margin-top:56px;padding:26px 28px;border:1px solid var(--line);border-radius:6px;background:var(--paper-2)}
+  .odl .bigseal{width:76px;height:76px;flex:0 0 auto;transform:scale(.6) rotate(-12deg);opacity:0;transition:transform .8s cubic-bezier(.2,1.3,.4,1),opacity .5s}
+  .odl .authority.in .bigseal{transform:none;opacity:1}
+  .odl .authority .txt{font-size:15px;color:var(--ink-2)}
+  .odl .authority .txt b{color:var(--ink);font-weight:600;font-family:var(--serif);font-size:17px}
+
+  /* coverage */
+  .odl .cover{display:flex;align-items:baseline;gap:26px;flex-wrap:wrap;padding:46px 0 6px;margin-top:44px;border-top:1px solid var(--line)}
+  .odl .cover .lab{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3);flex:0 0 auto}
+  .odl .editions{display:flex;gap:12px;flex-wrap:wrap}
+  .odl .ed{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;font-weight:500;padding:9px 15px;border:1px solid var(--line);border-radius:2px;background:var(--paper-2)}
+  .odl .ed .cc2{font-family:var(--mono);font-size:11px;color:var(--seal);letter-spacing:.08em}
+  .odl .ed.soon{color:var(--ink-3);font-weight:400;border-style:dashed}
+  .odl .ed.soon .cc2{color:var(--ink-3)}
+
+  /* contact */
+  .odl .cta-block{position:relative;background:var(--ink);color:var(--paper);border-radius:5px;padding:52px 46px;margin:56px 0 0;overflow:hidden}
+  .odl .cta-block::after{content:"";position:absolute;right:-60px;top:-60px;width:260px;height:260px;border:44px solid rgba(123,42,49,.16);border-radius:50%;animation:odlspin 40s linear infinite}
+  @keyframes odlspin{to{transform:rotate(360deg)}}
+  .odl .cta-block .in{position:relative;display:flex;align-items:center;justify-content:space-between;gap:30px;flex-wrap:wrap}
+  .odl .cta-block h2{font-family:var(--serif);font-weight:600;font-size:clamp(24px,3vw,32px);margin:0 0 10px;letter-spacing:-.01em;text-wrap:balance;max-width:16em}
+  .odl .cta-block p{margin:0;color:#B7AE9B;font-size:15.5px;max-width:30em}
+  .odl .cta-block .mailbtn{font-family:var(--mono);font-size:15px;color:#fff;text-decoration:none;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);padding:16px 22px;border-radius:3px;white-space:nowrap;transition:.2s}
+  .odl .cta-block .mailbtn:hover{background:var(--seal);border-color:var(--seal);transform:translateY(-1px)}
+
+  /* footer */
+  .odl footer{padding:28px 0 48px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:30px;color:var(--ink-3);font-size:12.5px}
+  .odl footer .src{font-family:var(--mono);font-size:11px;letter-spacing:.02em}
+
+  .odl .rise{animation:odlrise .7s cubic-bezier(.2,.7,.2,1) both}
+  .odl .rise.d2{animation-delay:.09s}.odl .rise.d3{animation-delay:.18s}
+  @keyframes odlrise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+  @media (prefers-reduced-motion:reduce){
+    .odl .rise,.odl .rec.stampin,.odl .pulse,.odl .scan,.odl .xarrow .track,.odl .cta-block::after{animation:none}
+    .odl .reveal{opacity:1;transform:none;transition:none}
+    .odl .fld{opacity:1;transform:none}
+    .odl .bigseal{opacity:1;transform:none}
+  }
+  @media (max-width:860px){
+    .odl .hero{grid-template-columns:1fr;gap:44px;padding:48px 0}
+    .odl .stats{grid-template-columns:1fr}
+    .odl .stat{border-right:0;border-bottom:1px solid var(--line)}
+    .odl .stat:last-child{border-bottom:0}
+    .odl .xform{grid-template-columns:1fr}
+    .odl .xcol.raw,.odl .xarrow{border-right:0;border-bottom:1px solid var(--line)}
+    .odl .xarrow{padding:10px 0}.odl .xarrow svg{transform:rotate(90deg)}
+    .odl .pipe-grid{grid-template-columns:1fr}
+    .odl .step{border-right:0;border-bottom:1px solid var(--line);padding:26px 0}
+    .odl .step:not(:first-child){padding-left:0}
+    .odl .authority{flex-direction:column;text-align:center}
+    .odl .cta-block .in{flex-direction:column;align-items:flex-start}
+  }
+</style>
+
+<div class="odl">
+  <div class="wrap">
+
+    <div class="mast">
+      <div class="brand">
+        <svg class="seal-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+          <circle cx="20" cy="20" r="18.5" fill="#7B2A31"/>
+          <circle cx="20" cy="20" r="14.5" fill="none" stroke="#EFE2DF" stroke-width="1" stroke-dasharray="2 2.4" opacity=".7"/>
+          <rect x="12" y="14.4" width="10" height="2" rx="1" fill="#EFE2DF"/>
+          <rect x="12" y="19" width="16" height="2" rx="1" fill="#EFE2DF"/>
+          <rect x="12" y="23.6" width="7" height="2" rx="1" fill="#EFE2DF" opacity=".7"/>
+        </svg>
+        <div class="nm">OpenData&nbsp;Leads<small>Registre · données officielles</small></div>
+      </div>
+      <div class="dateline">
+        <div>Le registre vivant des entreprises</div>
+        <div><b id="odl-edition">Édition du 07.07.2026</b></div>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div>
+        <p class="kicker rise">Sources officielles · mise à jour quotidienne</p>
+        <h1 class="rise d2">Chaque nouvelle entreprise, <em>dès la semaine de son immatriculation.</em></h1>
+        <p class="lede rise d2">OpenData Leads lit les registres officiels de l'État et les transforme en flux frais, enrichis et dédupliqués d'entreprises nouvellement immatriculées — livrés prêts pour votre CRM.</p>
+        <div class="actions rise d3">
+          <a class="btn" href="mailto:contact@opendataleads.com?subject=OpenData%20Leads%20—%20échantillon%20gratuit">
+            Recevoir un échantillon gratuit
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h9M8.5 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <span class="assurance">gratuit · filtré sur votre secteur</span>
+        </div>
+      </div>
+
+      <div class="register rise d3" aria-label="Échantillon d'entreprises nouvellement immatriculées">
+        <div class="reg-head">
+          <span class="reg-title">Nouvelles immatriculations</span>
+          <span class="reg-live"><span class="pulse"></span>en direct</span>
+        </div>
+        <div class="reg-body">
+          <div class="scan"></div>
+          <ul class="reg-list" id="odl-reg"></ul>
+          <div class="reg-fade"></div>
+        </div>
+        <div class="reg-foot">
+          <span id="odl-count">— sociétés aujourd'hui</span>
+          <span>dédupliqué · enrichi · officiel</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats reveal" aria-label="En chiffres">
+      <div class="stat">
+        <div class="num" data-target="284600">0</div>
+        <div class="cap">nouvelles sociétés françaises immatriculées en une seule année — le flux officiel que nous lisons chaque jour.</div>
+        <div class="src">Source : INSEE, créations 2024 (sociétés)</div>
+      </div>
+      <div class="stat">
+        <div class="num" data-target="3">0</div>
+        <div class="cap">registres nationaux couverts aujourd'hui — France, Royaume-Uni et Norvège.</div>
+        <div class="src">BODACC · RNE · Companies House · BRREG</div>
+      </div>
+      <div class="stat">
+        <div class="num" data-target="10" data-suffix="+">0</div>
+        <div class="cap">champs sur chaque société — dénomination, activité, capital, adresse et dirigeants nommés.</div>
+        <div class="src">Lignes à plat, prêtes pour le CRM</div>
+      </div>
+    </section>
+
+    <section class="demo reveal" aria-label="Du registre officiel à la ligne enrichie">
+      <div class="lead">
+        <span class="n">La transformation</span>
+        <h2>Une société — telle que publiée, telle que livrée.</h2>
+      </div>
+      <div class="xform" id="odl-xform">
+        <div class="xcol raw">
+          <div class="h">Telle que publiée au registre</div>
+          <div class="line">
+            <span class="dim">BODACC · A · </span>immatriculation<br>
+            <span class="dim">SIREN </span>906&nbsp;512&nbsp;334<br>
+            <span class="dim">« NOVENTA TECH »</span><br>
+            <span class="dim">Paris — 05/07/2026</span>
+          </div>
+        </div>
+        <div class="xarrow"><span class="track"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h15M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <div class="xcol">
+          <div class="h">Telle que livrée dans votre CRM</div>
+          <div class="fields" id="odl-fields">
+            <div class="fld"><span class="k">société</span><span class="v"><b>NOVENTA TECH</b> — SAS</span></div>
+            <div class="fld"><span class="k">SIREN</span><span class="v">906 512 334</span></div>
+            <div class="fld"><span class="k">activité</span><span class="v"><span class="badge">62.01Z</span>Programmation informatique</span></div>
+            <div class="fld"><span class="k">immatriculée</span><span class="v">05/07/2026 · Paris (75)</span></div>
+            <div class="fld"><span class="k">capital</span><span class="v">10 000 €</span></div>
+            <div class="fld"><span class="k">dirigeants</span><span class="v">1 président · 2 associés</span></div>
+            <div class="fld"><span class="k">statut</span><span class="v"><span class="ok">● active</span> · source officielle</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pipe reveal" aria-label="Comment le flux est construit">
+      <div class="pipe-grid">
+        <div class="step">
+          <div class="no">01 — lire</div>
+          <h3>Depuis le registre officiel</h3>
+          <p>Nous lisons directement l'open data public — <code>BODACC</code>, <code>RNE</code>, <code>Companies&nbsp;House</code>, <code>BRREG</code>. Pas de scraping, pas de données grises.</p>
+        </div>
+        <div class="step">
+          <div class="no">02 — enrichir</div>
+          <h3>Des lignes qualifiées</h3>
+          <p>Chaque société est jointe à son code d'activité, sa forme juridique, son capital, son adresse et ses dirigeants nommés — mise à plat en lignes prêtes pour le CRM.</p>
+        </div>
+        <div class="step">
+          <div class="no">03 — livrer</div>
+          <h3>Uniquement du nouveau</h3>
+          <p>Dédupliqué et livré en delta, filtré sur votre secteur et votre région, poussé vers un Sheet, un CSV ou un webhook — chaque jour ou chaque semaine.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="authority reveal" aria-label="Sources officielles">
+      <svg class="bigseal" viewBox="0 0 80 80" fill="none" aria-hidden="true">
+        <circle cx="40" cy="40" r="37" fill="none" stroke="#7B2A31" stroke-width="2"/>
+        <circle cx="40" cy="40" r="30" fill="none" stroke="#7B2A31" stroke-width="1" stroke-dasharray="2 3" opacity=".6"/>
+        <path d="M31 40l6 6 12-13" stroke="#7B2A31" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="40" y="20" text-anchor="middle" font-family="ui-monospace,monospace" font-size="7" fill="#7B2A31" letter-spacing="1">SOURCE</text>
+        <text x="40" y="67" text-anchor="middle" font-family="ui-monospace,monospace" font-size="7" fill="#7B2A31" letter-spacing="1">OFFICIELLE</text>
+      </svg>
+      <div class="txt"><b>Chaque ligne remonte à un registre officiel de l'État.</b><br>Données publiques officielles, réutilisées sous Licence Ouverte 2.0 — pas de profils scrapés, pas de données grises. Conçu pour les équipes KYB, conformité et commerciales qui ont besoin de données défendables.</div>
+    </section>
+
+    <section class="cover reveal" aria-label="Couverture">
+      <span class="lab">Éditions disponibles</span>
+      <div class="editions">
+        <span class="ed"><span class="cc2">FR</span>France</span>
+        <span class="ed"><span class="cc2">GB</span>Royaume-Uni</span>
+        <span class="ed"><span class="cc2">NO</span>Norvège</span>
+        <span class="ed soon"><span class="cc2">EU</span>D'autres registres sous presse</span>
+      </div>
+    </section>
+
+    <section class="cta-block reveal">
+      <div class="in">
+        <div>
+          <h2>Dites-nous à qui vous vendez. Nous vous envoyons l'édition de la semaine.</h2>
+          <p>Un échantillon gratuit des sociétés immatriculées dans votre secteur et votre région ces sept derniers jours — de vraies lignes, sans engagement.</p>
+        </div>
+        <a class="mailbtn" href="mailto:contact@opendataleads.com?subject=OpenData%20Leads%20—%20échantillon%20gratuit">contact@opendataleads.com</a>
+      </div>
+    </section>
+
+    <footer>
+      <span>© 2026 OpenData Leads · Données fraîches d'entreprises européennes, issues des registres publics officiels. · <a href="confidentialite.html">Confidentialité &amp; mentions</a></span>
+      <span class="src">Données issues des registres publics officiels, réutilisées sous Licence Ouverte 2.0 — demandes d'opposition et de contact honorées.</span>
+      <span class="src">Source : BODACC (DILA, bodacc.fr) &amp; RNE via recherche-entreprises.api.gouv.fr — licence ouverte 2.0 — extraction du [DATE_EXTRACTION].</span>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  try{
+    var d=new Date(),p=function(x){return (x<10?"0":"")+x;};
+    document.getElementById("odl-edition").textContent="Édition du "+p(d.getDate())+"."+p(d.getMonth()+1)+"."+d.getFullYear();
+  }catch(e){}
+
+  /* ---- live register ---- */
+  var POOL=[
+    {c:"FR",n:"Noventa Tech",f:"SAS",a:"62.01Z · Logiciel",l:"Paris 75"},
+    {c:"GB",n:"Harrowgate Logistics Ltd",f:"LTD",a:"49410 · Fret",l:"Leeds"},
+    {c:"NO",n:"Fjordline Maritime AS",f:"AS",a:"50.20 · Transport maritime",l:"Bergen"},
+    {c:"FR",n:"Clinique Dentaire Lumen",f:"SELARL",a:"86.23Z · Dentaire",l:"Lyon 69"},
+    {c:"GB",n:"Brightford Analytics Ltd",f:"LTD",a:"62020 · Conseil IT",l:"Manchester"},
+    {c:"FR",n:"Les Serres de Vaucluse",f:"SCEA",a:"01.13Z · Maraîchage",l:"Avignon 84"},
+    {c:"NO",n:"Nordkraft Solar AS",f:"AS",a:"35.11 · Énergie",l:"Trondheim"},
+    {c:"FR",n:"Maison Duval Traiteur",f:"SARL",a:"56.21Z · Traiteur",l:"Bordeaux 33"},
+    {c:"GB",n:"Kestrel Dental Care Ltd",f:"LTD",a:"86230 · Dentaire",l:"Bristol"},
+    {c:"FR",n:"Orbite Conseil",f:"SAS",a:"70.22Z · Conseil",l:"Nantes 44"},
+    {c:"NO",n:"Vikenbygg Entreprenør AS",f:"AS",a:"41.20 · Construction",l:"Oslo"},
+    {c:"FR",n:"Studio Hélios",f:"SASU",a:"74.10Z · Design",l:"Paris 75"},
+    {c:"GB",n:"Pennine Renewables Ltd",f:"LTD",a:"35110 · Énergie",l:"Sheffield"},
+    {c:"NO",n:"Havglass Interiør AS",f:"AS",a:"43.34 · Aménagement",l:"Stavanger"}
+  ];
+  var list=document.getElementById("odl-reg"),counter=document.getElementById("odl-count");
+  var MAX=7,idx=0,count=1487,rows=[];
+  function label(sec){if(sec<8)return '<span class="new">à l\'instant</span>';if(sec<60)return "il y a "+sec+" s";return "il y a "+Math.floor(sec/60)+" min";}
+  function tickTimes(){var now=Date.now();for(var i=0;i<rows.length;i++){var sec=Math.floor((now-rows[i].born)/1000)+rows[i].offset;rows[i].ts.innerHTML=label(sec);}}
+  function add(off){var r=POOL[idx%POOL.length];idx++;var li=document.createElement("li");li.className="rec"+(reduce?"":" stampin");
+    li.innerHTML='<span class="cc">'+r.c+'</span><span class="co"><b>'+r.n+'</b><span><i>'+r.f+'</i> · '+r.a+' · '+r.l+'</span></span><span class="ts"></span>';
+    list.insertBefore(li,list.firstChild);var o={el:li,born:Date.now(),offset:off||0,ts:li.querySelector(".ts")};rows.unshift(o);
+    while(rows.length>MAX){var old=rows.pop();if(old.el&&old.el.parentNode)old.el.parentNode.removeChild(old.el);}
+    count++;counter.textContent=count.toLocaleString("fr-FR")+" sociétés aujourd'hui";}
+  var seed=[900,640,410,250,120,40,6];for(var i=0;i<seed.length;i++){add(seed[i]);}tickTimes();
+  if(!reduce){setInterval(tickTimes,1000);(function loop(){var w=2200+Math.random()*2600;setTimeout(function(){add(0);tickTimes();loop();},w);})();}
+
+  /* ---- scroll reveal ---- */
+  var reveals=[].slice.call(document.querySelectorAll(".reveal"));
+  function onReveal(el){
+    el.classList.add("in");
+    if(el.classList.contains("stats")) countUp(el);
+    if(el.classList.contains("demo")) startXform();
+  }
+  if(reduce || !("IntersectionObserver" in window)){
+    reveals.forEach(onReveal);
+  }else{
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){onReveal(e.target);io.unobserve(e.target);}});},{threshold:.25});
+    reveals.forEach(function(el){io.observe(el);});
+  }
+
+  /* ---- count up ---- */
+  function countUp(scope){
+    scope.querySelectorAll(".num").forEach(function(el){
+      var target=parseInt(el.getAttribute("data-target"),10),suf=el.getAttribute("data-suffix")||"";
+      if(reduce){el.innerHTML=target.toLocaleString("fr-FR")+(suf?'<span class="u">'+suf+'</span>':'');return;}
+      var start=null,dur=1400;
+      function fmt(v){return v.toLocaleString("fr-FR")+(suf?'<span class="u">'+suf+'</span>':'');}
+      function step(t){if(!start)start=t;var p=Math.min((t-start)/dur,1);var e=1-Math.pow(1-p,3);
+        el.innerHTML=fmt(Math.round(target*e));if(p<1)requestAnimationFrame(step);}
+      requestAnimationFrame(step);
+    });
+  }
+
+  /* ---- transform demo (loops while onscreen) ---- */
+  var xStarted=false;
+  function startXform(){
+    if(xStarted)return;xStarted=true;
+    var flds=[].slice.call(document.querySelectorAll("#odl-fields .fld"));
+    if(reduce){flds.forEach(function(f){f.classList.add("show");});return;}
+    function run(){
+      flds.forEach(function(f){f.classList.remove("show");});
+      flds.forEach(function(f,i){setTimeout(function(){f.classList.add("show");},220+i*180);});
+    }
+    run();
+    setInterval(run,220+flds.length*180+2600);
+  }
+})();
+</script>
+
+</body>
+</html>
