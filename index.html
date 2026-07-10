@@ -157,6 +157,10 @@
   .odl .cta-block p{margin:0;color:#B7AE9B;font-size:15.5px;max-width:30em}
   .odl .cta-block .mailbtn{font-family:var(--mono);font-size:15px;color:#fff;text-decoration:none;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);padding:16px 22px;border-radius:3px;white-space:nowrap;transition:.2s}
   .odl .cta-block .mailbtn:hover{background:var(--seal);border-color:var(--seal);transform:translateY(-1px)}
+  .odl .cta-block .mailwrap{display:flex;flex-direction:column;gap:9px;align-items:stretch}
+  .odl .cta-block .copybtn{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:#B7AE9B;background:none;border:1px dashed rgba(255,255,255,.25);padding:9px 14px;border-radius:3px;cursor:pointer;transition:.2s}
+  .odl .cta-block .copybtn:hover{color:#fff;border-color:rgba(255,255,255,.5)}
+  .odl .cta-block .copybtn.ok{color:#7FC79F;border-color:#7FC79F;border-style:solid}
 
   /* footer */
   .odl footer{padding:28px 0 48px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:30px;color:var(--ink-3);font-size:12.5px}
@@ -335,7 +339,10 @@
           <h2>Dites-nous à qui vous vendez. Nous vous envoyons l'édition de la semaine.</h2>
           <p>Un échantillon gratuit des sociétés immatriculées dans votre secteur et votre région ces sept derniers jours — de vraies lignes, sans engagement.</p>
         </div>
-        <a class="mailbtn" href="mailto:contact@opendataleads.com?subject=OpenData%20Leads%20—%20échantillon%20gratuit">contact@opendataleads.com</a>
+        <div class="mailwrap">
+          <a class="mailbtn" href="mailto:contact@opendataleads.com?subject=OpenData%20Leads%20—%20échantillon%20gratuit">contact@opendataleads.com</a>
+          <button class="copybtn" id="odl-copy" type="button">Copier l'adresse e-mail</button>
+        </div>
       </div>
     </section>
 
@@ -356,6 +363,17 @@
     var d=new Date(),p=function(x){return (x<10?"0":"")+x;};
     document.getElementById("odl-edition").textContent="Édition du "+p(d.getDate())+"."+p(d.getMonth()+1)+"."+d.getFullYear();
   }catch(e){}
+
+  /* ---- copy email ---- */
+  var copyBtn=document.getElementById("odl-copy");
+  if(copyBtn){copyBtn.addEventListener("click",function(){
+    var addr="contact@opendataleads.com";
+    function done(){copyBtn.classList.add("ok");copyBtn.textContent="Adresse copiée ✓";
+      setTimeout(function(){copyBtn.classList.remove("ok");copyBtn.textContent="Copier l'adresse e-mail";},2600);}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(addr).then(done,fallback);}else{fallback();}
+    function fallback(){var t=document.createElement("textarea");t.value=addr;t.style.position="fixed";t.style.opacity="0";
+      document.body.appendChild(t);t.select();try{document.execCommand("copy");done();}catch(e){}document.body.removeChild(t);}
+  });}
 
   /* ---- live register ---- */
   var POOL=[
